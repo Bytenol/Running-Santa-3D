@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+    <meta />
+    <link rel="stylesheet" href="./main.css" />
+    <script type="x/shader" id="basic.vert">#version 300 es
+        layout (location=0) in vec3 position;
+        layout (location=1) in vec2 texCoord;
+        layout (location=2) in vec3 normal;
+        layout (location=3) in vec3 translation;
+        uniform mat4 mProjection, mModel, mView;
+
+        out vec2 o_texCoord;
+        out vec3 o_normal;
+
+        void main() {
+            o_texCoord = texCoord;
+            o_normal = mat3(mModel) * normal;
+            gl_Position = mProjection * mView * mModel * vec4(translation + position, 1.0);
+        }
+    </script>
+    <script type="x/shader" id="basic.frag">#version 300 es
+        precision highp float;
+        in vec2 o_texCoord;
+        in vec3 o_normal;
+
+        uniform sampler2D u_texture;
+        out vec4 FragColor;
+
+        vec3 getDirectionalLight(vec3 normal) {
+            vec3 dir = vec3(-1, 0.3, 1);
+            float alpha = max(dot(dir, normalize(normal)), 0.5);
+            return vec3(1, 1, 1) * alpha;
+        }
+
+        void main() {
+            vec3 ambientLight = vec3(1, 1, 1) * 0.5;
+            vec3 directionalLight = getDirectionalLight(o_normal);
+
+            FragColor = texture(u_texture, o_texCoord);
+            FragColor.rgb *= (ambientLight + directionalLight);
+        }
+    </script>
+    <script type="module" src="./build/index.js"></script>
+    <title>Santa Run 3D</title>
+    <style>
+        #gl {
+            background-image: url("assets/ice.jpeg");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size:contain;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="page active">
+            Hello world
+        </div>
+        <canvas class="page" id="gl"></canvas>
+    </main>
+</body>
+</html>
