@@ -1,4 +1,4 @@
-import { GameState, getGameState, getHeight, getWidth, resetContext, setupWindowSize } from "./Renderer"
+import { GameState, getGameState, getHeight, getWidth, resetContext, setupWindowSize } from "./Renderer.js"
 
 class ImageRectBoundEvent {
     constructor(
