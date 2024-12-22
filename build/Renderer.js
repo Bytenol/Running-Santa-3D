@@ -1,5 +1,11 @@
+;
 let gl;
+let gameState = 0 /* GameState.MENU */;
 const programs = {};
+const setGameState = (state) => {
+    gameState = state;
+};
+const getGameState = () => gameState;
 const createShader = (gl, type, src) => {
     const shader = gl.createShader(type);
     gl.shaderSource(shader, src);
@@ -25,42 +31,60 @@ const createProgram = (gl, name, vSource, fSource) => {
     }
 };
 const getProgram = (name) => programs[name];
-export default class Renderer {
-    static width = 640;
-    static height = 360;
-    static init(canvasId) {
-        const canvas = document.getElementById(canvasId);
-        canvas.width = Renderer.width;
-        canvas.height = Renderer.height;
-        try {
-            gl = canvas.getContext("webgl2");
-        }
-        catch (e) {
-            throw e;
-        }
-        const vertexShaderSource = document.getElementById("basic.vert")?.textContent;
-        const fragmentShaderSource = document.getElementById("basic.frag")?.textContent;
-        createProgram(gl, "basic", vertexShaderSource, fragmentShaderSource);
+const initRenderer = (canvasId, width, height) => {
+    const canvas = document.getElementById(canvasId);
+    canvas.width = width;
+    canvas.height = height;
+    try {
+        gl = canvas.getContext("webgl2");
     }
-    static getContext() {
-        return gl;
+    catch (e) {
+        throw e;
     }
-    static draw(gl) {
-    }
-    static update(gl, dt) {
-    }
-}
-const forceLandscape = () => {
+    const vertexShaderSource = document.getElementById("basic.vert")?.textContent;
+    const fragmentShaderSource = document.getElementById("basic.frag")?.textContent;
+    createProgram(gl, "basic", vertexShaderSource, fragmentShaderSource);
+};
+const getContext = () => gl;
+const setupWindowSize = () => {
     const main = document.getElementsByTagName("main")[0];
     const [W, H] = [innerWidth, innerHeight];
-    const aspectRatio = 640 / 360;
+    let width = 0;
+    let height = 0;
     if (W > H) {
-        main.style.width = W + "px";
-        main.style.height = H + "px";
+        // leave window screen as
+        width = W;
+        height = H;
+        main.setAttribute("style", `
+            width: ${width}px;
+            height: ${height}px;
+        `);
     }
     else {
-        main.style.width = H + "px";
-        main.style.height = W + "px";
+        // height is shorter than the width, use landscape
+        // this is a rough attempt to detect mobile devices
+        width = H;
+        height = W;
+        main.setAttribute("style", `
+            width: ${width}px;
+            height: ${height}px;
+            transform-origin: 0px 0px;
+            position: absolute;
+            left: 100%;
+            transform: rotate(90deg);
+        `);
     }
+    return { width, height };
 };
-export { getProgram, forceLandscape };
+const resetContext = (w, h) => {
+    gl.canvas.width = w;
+    gl.canvas.height = h;
+    gl.clearColor(0, 0, 0, 0);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.enable(gl.CULL_FACE);
+    gl.enable(gl.DEPTH_TEST);
+};
+const getWidth = () => gl.canvas.width;
+const getHeight = () => gl.canvas.height;
+export { initRenderer, getProgram, setupWindowSize, getContext, resetContext, setGameState, getGameState, getWidth, getHeight };

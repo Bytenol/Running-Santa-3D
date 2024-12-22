@@ -48,16 +48,22 @@
             background-image: url("assets/ice.jpeg");
             background-repeat: no-repeat;
             background-attachment: fixed;
-            background-size:contain;
+            background-size: cover;
         }
     </style>
 </head>
 <body>
     <main>
-        <div class="page active">
-            Hello world
+        <div class="page " id="mainMenu">
+            <img src="./assets/menu.png" style="width: 100%;height: 100%;">
         </div>
-        <canvas class="page" id="gl"></canvas>
+        <div class="page" id="helpScreen">
+            <img src="./assets/helpScreen.png" style="width: 100%;height: 100%;">
+        </div>
+        <!-- <div class="page active" id="aboutScreen">
+            <img src="./assets/aboutScreen.png" style="width: 100%;height: 100%;">
+        </div> -->
+        <canvas class="page active" id="gl"></canvas>
     </main>
 </body>
 </html>

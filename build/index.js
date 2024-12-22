@@ -1,9 +1,10 @@
 import { loadAssets } from "./Loader.js";
-import Renderer, { forceLandscape, getProgram } from "./Renderer.js";
+import { setupWindowSize, getProgram, resetContext, getContext, initRenderer } from "./Renderer.js";
 import { createTextureFromImage, setTexture, setupTextureLocation } from "./texture.js";
 import * as mat4 from "./mat4.js";
 import InstancedRenderer from "./InstancedRenderer.js";
 import Moveable from "./Moveable.js";
+import initEvent from "./eventHandler.js";
 const allAssetInfo = [
     { name: "starfield", url: "starfield.png", type: "image" },
     { name: "wall", url: "wall.png", type: "image" },
@@ -169,10 +170,8 @@ const eventHandler = () => {
         }
     });
 };
-const init = (gl) => {
-    gl.clearColor(0, 0, 0, 0);
-    gl.enable(gl.BLEND);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+const init = (gl, w, h) => {
+    resetContext(w, h);
     const program = getProgram("basic");
     gl.useProgram(program);
     location.projection = gl.getUniformLocation(program, "mProjection");
@@ -199,15 +198,12 @@ const update = (dt) => {
     cube.update(dt);
     santa.update(dt);
 };
-let ang = 0;
 const draw = (gl) => {
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-    gl.enable(gl.CULL_FACE);
-    gl.enable(gl.DEPTH_TEST);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     const program = getProgram("basic");
     gl.useProgram(program);
-    const camera = mat4.lookAt([0, 0.6, 3], [santa.pos.x, santa.pos.y, santa.pos.z], [0, 1, 0]);
+    const camera = mat4.lookAt([0, 0.7, 2], [santa.pos.x, santa.pos.y, santa.pos.z], [0, 1, 0]);
     gl.uniformMatrix4fv(location.view, false, new Float32Array(camera));
     setTexture("blocks");
     cube.instancedRenderer.render();
@@ -227,11 +223,12 @@ const mainLoop = (gl) => {
 };
 const main = async () => {
     await loadAssets("./assets/", allAssetInfo);
-    forceLandscape();
-    Renderer.init("gl");
-    const gl = Renderer.getContext();
-    init(gl);
+    const { width, height } = setupWindowSize();
+    initRenderer("gl", width, height);
+    const gl = getContext();
+    init(gl, width, height);
     mainLoop(gl);
+    initEvent();
     eventHandler();
 };
 addEventListener("load", main);

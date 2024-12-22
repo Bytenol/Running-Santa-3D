@@ -10,17 +10,12 @@ body {
     width: 100vw;
     height: 100vh;
     position: fixed;
+}
+
+.flex-center {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-main {
-    background-color: red;
-    transform-origin: 0 0;
-    transform: translate(-50%) rotate(90deg);
-    /* position: absolute;
-    left: 50%; */
 }
 
 .page {

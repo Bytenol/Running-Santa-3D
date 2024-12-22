@@ -1,1 +1,1 @@
-{"root":["./src/instancedrenderer.ts","./src/loader.ts","./src/moveable.ts","./src/renderer.ts","./src/index.ts","./src/mat4.ts","./src/texture.ts","./src/types.d.ts"],"version":"5.7.2"}
+{"root":["./src/instancedrenderer.ts","./src/loader.ts","./src/moveable.ts","./src/renderer.ts","./src/eventhandler.ts","./src/index.ts","./src/mat4.ts","./src/texture.ts","./src/types.d.ts"],"version":"5.7.2"}
